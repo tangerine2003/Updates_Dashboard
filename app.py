@@ -70,7 +70,7 @@ def get_logo():
     logo = html.Div([
 
         html.Div([
-            html.Img(src='http://logonoid.com/images/vanguard-logo.png', height='40', width='160')
+            # html.Img(src='http://logonoid.com/images/vanguard-logo.png', height='40', width='160')
         ], className="ten columns padded"),
 
         html.Div([
@@ -496,8 +496,8 @@ performance = html.Div([  # page 2
                     html.H6("Performance",
                             className="gs-header gs-table-header padded"),
                     dcc.Markdown(dedent('''
-                    # 21 %                     26                              33
-                    On Time Completion      Request to Vetted               New Request
+                    # 21 % &nbsp; &nbsp; &nbsp;     26  &nbsp; &nbsp;     33
+                    On Time Completion &nbsp; &nbsp; &nbsp;     Request to Vetted   &nbsp; &nbsp;  New Request
                     
                     
                     '''))],className="twelve columns"),
