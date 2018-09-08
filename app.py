@@ -36,8 +36,8 @@ align_name = ['Expeditors', 'Americas', 'Southeast', 'SAV', 'CHS', 'MCO', 'MIA',
 align_value = [9,0,72,9,7,0,3,0]
 
 # Resource Breakdown Percentage
-break_name = ['Project','Special', 'Support', 'Ticket']
-break_value = [78,10,8,4]
+#break_name = ['Project','Special', 'Support', 'Ticket']
+#break_value = [78,10,8,4]
 
 df_price_perf = pd.read_csv('https://plot.ly/~bdun9/2756.csv')
 df_avg_returns = pd.read_csv('https://plot.ly/~bdun9/2793.csv')
@@ -275,86 +275,94 @@ overview = html.Div([  # page 1
             html.Div([
                 html.Div([
                     html.H6('Resource Breakdown Percentage',
-                            className="gs-header gs-table-header padded"),
+                            className="gs-header gs-text-header padded"),
 
-                    html.P("Break down of the resource areas where the most time was spent"),
+                    html.P("Breakdown of the resource areas where the most time was spent"),
                     dcc.Graph(
                         id = "graph-3",
                         figure={
                             'data' : [
                                 go.Bar(
-                                    x=break_name,
-                                    y=break_value,
-                                    orientation='h')],
+                                    y=['Resources'],
+                                    x=[78],
+                                    textposition='auto',
+                                    orientation='h',
+                                    name = "Project"
+                                    ),
+                                    go.Bar(
+                                    y=['Resources'],
+                                    x=[10],
+                                    textposition='auto',
+                                    orientation='h',
+                                    name = "Special"
+                                    ),
+                                    go.Bar(
+                                    y=['Resources'],
+                                    x=[8],
+                                    textposition='auto',
+                                    orientation='h',
+                                    name = "Support"
+                                    ),
+                                    go.Bar(
+                                    y=['Resources'],
+                                    x=[4],
+                                    textposition='auto',
+                                    orientation='h',
+                                    name = "Ticket"
+                                    ),],
                             'layout' : go.Layout(
                                 autosize = False,
+                                barmode='stack',
                                 font = {
                                   "family": "Raleway",
                                   "size": 10
-                                },)
+                                },
+                                showlegend= True,
+                                height = 200,
+                                width = 340,
+                                hovermode = "closest",
+                                margin = {
+                                  "r": 0,
+                                  "t": 20,
+                                  "b": 15,
+                                  "l": 50
+                                })
                         }
 
                     )
                 ], className="six columns"),
 
+
+
                 html.Div([
                     html.H6("Alignment",
                             className="gs-header gs-table-header padded"),
                     dcc.Graph(
-                        id='graph-3',
+                        id='graph-4',
                         figure = {
                             'data': [
-                                
-
+                                go.Pie(
+                                    labels= align_name,
+                                    values= align_value,
+                                    hole=.5,
+                                    textposition='auto'
+                                )                              
                             ],
                             'layout': go.Layout(
-                                title = "",
-                                annotations = [
-                                    {
-                                      "x": 0.69,
-                                      "y": 0.6,
-                                      "font": {
-                                        "color": "rgb(31, 119, 180)",
-                                        "family": "Raleway",
-                                        "size": 30
-                                      },
-                                      "showarrow": False,
-                                      "text": "<b>4</b>",
-                                      "xref": "x",
-                                      "yref": "y"
-                                    },
-                                    {
-                                      "x": 0.0631034482759,
-                                      "y": -0.04,
-                                      "align": "left",
-                                      "font": {
-                                        "color": "rgb(44, 160, 44)",
-                                        "family": "Raleway",
-                                        "size": 10
-                                      }
-                                    },
-                                    {
-                                      "x": 0.92125,
-                                      "y": -0.04,
-                                      "align": "right",
-                                      "font": {
-                                        "color": "rgb(214, 39, 40)",
-                                        "family": "Raleway",
-                                        "size": 10
-                                      }
-                                    }
-                                  ],
-                                  autosize = False,
-                                  height = 200,
-                                  width = 340,
-                                  hovermode = "closest",
-                                  margin = {
-                                    "r": 10,
-                                    "t": 20,
-                                    "b": 80,
-                                    "l": 10
-                                  },
-
+                                autosize = False,
+                                font = {
+                                  "family": "Raleway",
+                                  "size": 10
+                                },
+                                height = 325,
+                                width = 340,
+                                hovermode = "percent",
+                                margin = {
+                                "r": 10,
+                                "t": 20,
+                                "b": 100,
+                                "l": 15
+                                },
                                   showlegend = True
                             )
                         },
