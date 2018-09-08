@@ -1,4 +1,4 @@
-# coding: utf-8
+8# coding: utf-8
 
 import dash
 from dash.dependencies import Input, Output
@@ -18,7 +18,9 @@ server = app.server
 
 # read data for tables (one df per table)
 
-df_status_update = pd.DataFrame([["AR Solution", "QA", "Beta testing within MIA first week in Sept"],["Procurement", "QA", "Something else here"]], columns=['Project name', 'Project Status', 'Project Notes'])
+df_status_update = pd.DataFrame([["AR Solution", "     QA     ", "Beta testing within MIA first week in Sept"],
+                    ["Branch Procurement", "     QA     ", "Began piloting the tool in MIA. Ran into a permission issue that the CHQ team has to look into before using it"]], 
+                    columns=['Project name', 'Project Status', 'Project Notes'])
 
 # Employee KPI
 time_kpi_x = ["Chris Clifton", "Tyler Cox", "Luis Fernandez", "Dustin Snyder"]
@@ -27,28 +29,21 @@ time_kpi_y_hours = ["143", "139", "134", "146"]
 
 # Regional/Geo Contributions KPI
 reg_geo_kpi_label = ['Regional / Geography', 'Branch / District']
-reg_geo_kpi_values = ['81%', '19%']
+reg_geo_kpi_values = [81, 19]
 
-# Markdown Header Components
+# Alignment
+align_name = ['Expeditors', 'Americas', 'Southeast', 'SAV', 'CHS', 'MCO', 'MIA','SJU']
+align_value = [9,0,72,9,7,0,3,0]
 
-# final_h_markdown = 
+# Resource Breakdown Percentage
+break_name = ['Project','Special', 'Support', 'Ticket']
+break_value = [78,10,8,4]
 
-df_fund_facts = pd.read_csv('https://plot.ly/~bdun9/2754.csv')
 df_price_perf = pd.read_csv('https://plot.ly/~bdun9/2756.csv')
-df_current_prices = pd.read_csv('https://plot.ly/~bdun9/2753.csv')
-df_hist_prices = pd.read_csv('https://plot.ly/~bdun9/2765.csv')
 df_avg_returns = pd.read_csv('https://plot.ly/~bdun9/2793.csv')
-df_after_tax = pd.read_csv('https://plot.ly/~bdun9/2794.csv')
 df_recent_returns = pd.read_csv('https://plot.ly/~bdun9/2795.csv')
 df_equity_char = pd.read_csv('https://plot.ly/~bdun9/2796.csv')
 df_equity_diver = pd.read_csv('https://plot.ly/~bdun9/2797.csv')
-df_expenses = pd.read_csv('https://plot.ly/~bdun9/2798.csv')
-df_minimums = pd.read_csv('https://plot.ly/~bdun9/2799.csv')
-df_dividend = pd.read_csv('https://plot.ly/~bdun9/2800.csv')
-df_realized = pd.read_csv('https://plot.ly/~bdun9/2801.csv')
-df_unrealized = pd.read_csv('https://plot.ly/~bdun9/2802.csv')
-
-df_graph = pd.read_csv("https://plot.ly/~bdun9/2804.csv")
 
 # reusable componenets
 def make_dash_table(df):
@@ -70,7 +65,7 @@ def get_logo():
     logo = html.Div([
 
         html.Div([
-            # html.Img(src='http://logonoid.com/images/vanguard-logo.png', height='40', width='160')
+             html.Img(src='https://i.imgur.com/cbkzBeV.jpg', height='45.1', width='154.5')
         ], className="ten columns padded"),
 
         html.Div([
@@ -235,59 +230,36 @@ overview = html.Div([  # page 1
                 html.Div([
                     html.H6("Regional / Geography Contributions",
                             className="gs-header gs-table-header padded"),
+                    html.P("Regional and Geo Contributions KPI should be greater than 70% each month"),
                     dcc.Graph(
                         id="graph-2",
                         figure={
                             'data': [
-                                go.Pie(labels=reg_geo_kpi_label, values=reg_geo_kpi_values)
+                                go.Pie(
+                                    labels=reg_geo_kpi_label, 
+                                    values=reg_geo_kpi_values,
+                                    textposition='auto',
+                                    marker = {
+                                        "colors": ["rgb(132, 186, 91)",
+                                                "rgb(114, 147, 203)"]}
+                                    )
                             ],
                             'layout': go.Layout(
                                 autosize = False,
-                                title = "",
                                 font = {
                                   "family": "Raleway",
                                   "size": 10
                                 },
                                 height = 200,
                                 width = 340,
-                                hovermode = "closest",
-                                legend = {
-                                  "x": -0.0277108433735,
-                                  "y": -0.142606516291,
-                                  "orientation": "h"
-                                },
+                                hovermode = "percent",
                                 margin = {
-                                  "r": 20,
+                                  "r": 0,
                                   "t": 20,
-                                  "b": 20,
-                                  "l": 50
+                                  "b": 10,
+                                  "l": 10
                                 },
-                                showlegend = True,
-                                xaxis = {
-                                  "autorange": True,
-                                  "linecolor": "rgb(0, 0, 0)",
-                                  "linewidth": 1,
-                                  "range": [2008, 2018],
-                                  "showgrid": False,
-                                  "showline": True,
-                                  "title": "",
-                                  "type": "linear"
-                                },
-                                yaxis = {
-                                  "autorange": False,
-                                  "gridcolor": "rgba(127, 127, 127, 0.2)",
-                                  "mirror": False,
-                                  "nticks": 4,
-                                  "range": [0, 30000],
-                                  "showgrid": True,
-                                  "showline": True,
-                                  "ticklen": 10,
-                                  "ticks": "outside",
-                                  "title": "$",
-                                  "type": "linear",
-                                  "zeroline": False,
-                                  "zerolinewidth": 4
-                                }
+                                showlegend = True
                             )
                         },
                         config={
@@ -302,73 +274,38 @@ overview = html.Div([  # page 1
 
             html.Div([
                 html.Div([
-                    html.H6('Price & Performance (%)',
+                    html.H6('Resource Breakdown Percentage',
                             className="gs-header gs-table-header padded"),
-                    html.Table(make_dash_table(df_price_perf))
+
+                    html.P("Break down of the resource areas where the most time was spent"),
+                    dcc.Graph(
+                        id = "graph-3",
+                        figure={
+                            'data' : [
+                                go.Bar(
+                                    x=break_name,
+                                    y=break_value,
+                                    orientation='h')],
+                            'layout' : go.Layout(
+                                autosize = False,
+                                font = {
+                                  "family": "Raleway",
+                                  "size": 10
+                                },)
+                        }
+
+                    )
                 ], className="six columns"),
 
                 html.Div([
-                    html.H6("Risk Potential",
+                    html.H6("Alignment",
                             className="gs-header gs-table-header padded"),
                     dcc.Graph(
                         id='graph-3',
                         figure = {
                             'data': [
-                                go.Scatter(
-                                    x = ["0", "0.18", "0.18", "0"],
-                                    y = ["0.2", "0.2", "0.4", "0.2"],
-                                    fill = "tozerox",
-                                    fillcolor = "rgba(31, 119, 180, 0.2)",
-                                    hoverinfo = "none",
-                                    line = {"width": 0},
-                                    mode = "lines",
-                                    name = "B",
-                                    showlegend = False
-                                ),
-                                go.Scatter(
-                                    x = ["0.2", "0.38", "0.38", "0.2", "0.2"],
-                                    y = ["0.2", "0.2", "0.6", "0.4", "0.2"],
-                                    fill = "tozerox",
-                                    fillcolor = "rgba(31, 119, 180, 0.4)",
-                                    hoverinfo = "none",
-                                    line = {"width": 0},
-                                    mode = "lines",
-                                    name = "D",
-                                    showlegend = False
-                                ),
-                                go.Scatter(
-                                    x = ["0.4", "0.58", "0.58", "0.4", "0.4"],
-                                    y = ["0.2", "0.2", "0.8", "0.6", "0.2"],
-                                    fill = "tozerox",
-                                    fillcolor = "rgba(31, 119, 180, 0.6)",
-                                    hoverinfo = "none",
-                                    line = {"width": 0},
-                                    mode = "lines",
-                                    name = "F",
-                                    showlegend = False
-                                ),
-                                go.Scatter(
-                                    x = ["0.6", "0.78", "0.78", "0.6", "0.6"],
-                                    y = ["0.2", "0.2", "1", "0.8", "0.2"],
-                                    fill = "tozerox",
-                                    fillcolor = "rgb(31, 119, 180)",
-                                    hoverinfo = "none",
-                                    line = {"width": 0},
-                                    mode = "lines",
-                                    name = "H",
-                                    showlegend = False
-                                ),
-                                go.Scatter(
-                                    x = ["0.8", "0.98", "0.98", "0.8", "0.8"],
-                                    y = ["0.2", "0.2", "1.2", "1", "0.2"],
-                                    fill = "tozerox",
-                                    fillcolor = "rgba(31, 119, 180, 0.8)",
-                                    hoverinfo = "none",
-                                    line = {"width": 0},
-                                    mode = "lines",
-                                    name = "J",
-                                    showlegend = False
-                                ),
+                                
+
                             ],
                             'layout': go.Layout(
                                 title = "",
@@ -394,11 +331,7 @@ overview = html.Div([  # page 1
                                         "color": "rgb(44, 160, 44)",
                                         "family": "Raleway",
                                         "size": 10
-                                      },
-                                      "showarrow": False,
-                                      "text": "<b>Less risk<br>Less reward</b>",
-                                      "xref": "x",
-                                      "yref": "y"
+                                      }
                                     },
                                     {
                                       "x": 0.92125,
@@ -408,11 +341,7 @@ overview = html.Div([  # page 1
                                         "color": "rgb(214, 39, 40)",
                                         "family": "Raleway",
                                         "size": 10
-                                      },
-                                      "showarrow": False,
-                                      "text": "<b>More risk<br>More reward</b>",
-                                      "xref": "x",
-                                      "yref": "y"
+                                      }
                                     }
                                   ],
                                   autosize = False,
@@ -425,44 +354,8 @@ overview = html.Div([  # page 1
                                     "b": 80,
                                     "l": 10
                                   },
-                                  shapes = [
-                                    {
-                                      "fillcolor": "rgb(255, 255, 255)",
-                                      "line": {
-                                        "color": "rgb(31, 119, 180)",
-                                        "width": 4
-                                      },
-                                      "opacity": 1,
-                                      "type": "circle",
-                                      "x0": 0.621,
-                                      "x1": 0.764,
-                                      "xref": "x",
-                                      "y0": 0.135238095238,
-                                      "y1": 0.98619047619,
-                                      "yref": "y"
-                                    }
-                                  ],
-                                  showlegend = True,
-                                  xaxis = {
-                                    "autorange": False,
-                                    "fixedrange": True,
-                                    "range": [-0.05, 1.05],
-                                    "showgrid": False,
-                                    "showticklabels": False,
-                                    "title": "<br>",
-                                    "type": "linear",
-                                    "zeroline": False
-                                  },
-                                  yaxis = {
-                                    "autorange": False,
-                                    "fixedrange": True,
-                                    "range": [-0.3, 1.6],
-                                    "showgrid": False,
-                                    "showticklabels": False,
-                                    "title": "<br>",
-                                    "type": "linear",
-                                    "zeroline": False
-                                }
+
+                                  showlegend = True
                             )
                         },
                         config={
