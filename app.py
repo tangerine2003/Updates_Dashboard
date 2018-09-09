@@ -39,11 +39,14 @@ align_value = [9,0,72,9,7,0,3,0]
 #break_name = ['Project','Special', 'Support', 'Ticket']
 #break_value = [78,10,8,4]
 
-df_price_perf = pd.read_csv('https://plot.ly/~bdun9/2756.csv')
-df_avg_returns = pd.read_csv('https://plot.ly/~bdun9/2793.csv')
-df_recent_returns = pd.read_csv('https://plot.ly/~bdun9/2795.csv')
-df_equity_char = pd.read_csv('https://plot.ly/~bdun9/2796.csv')
-df_equity_diver = pd.read_csv('https://plot.ly/~bdun9/2797.csv')
+# data frames
+df_topten = pd.read_csv('Top 10 Projects.csv',header=0)
+
+#variables
+on_time_completion = '''# 30%'''
+request_to_vetted = '''# 20 '''
+new_request = '''# 33'''
+completed_request = '''# 20'''
 
 # reusable componenets
 def make_dash_table(df):
@@ -94,7 +97,9 @@ def get_menu():
 
         dcc.Link('Performance   ', href='/performance', className="tab"),
 
-        dcc.Link('All Projects   ', href='/all-projects', className="tab")
+        dcc.Link('All Projects (Active & Ready to Start)   ', href='/all-projects', className="tab"),
+
+        dcc.Link('All Projects (Vetting & On Hold)   ', href='/all-project-vet-hld', className="tab")
 
     ], className="row ")
     return menu
@@ -131,7 +136,7 @@ overview = html.Div([  # page 1
                 html.Div([
                     html.H6(["Regional Project Status"],
                             className="gs-header gs-table-header padded"),
-                    html.Table(make_dash_table(df_status_update)) #Back
+                    html.Table(make_dash_table(df_status_update),className="tiny-header")
                 ], className="six columns"),
 
             ], className="row "),
@@ -226,7 +231,8 @@ overview = html.Div([  # page 1
                         }
                     )
                 ], className="six columns"),
-
+                
+                #Regional / Geo Contributions
                 html.Div([
                     html.H6("Regional / Geography Contributions",
                             className="gs-header gs-table-header padded"),
@@ -390,44 +396,83 @@ performance = html.Div([  # page 2
             html.Br([]),
             get_menu(),
 
-            # Row ``
+            # Row 1
             html.Div([
-
+                # On Time Completion
                 html.Div([
-                    html.H6("Performance",
-                            className="gs-header gs-table-header padded"),
-                    dcc.Markdown(dedent('''
-                    # 21 % &nbsp; &nbsp; &nbsp;     26  &nbsp; &nbsp;     33
-                    On Time Completion &nbsp; &nbsp; &nbsp;     Request to Vetted   &nbsp; &nbsp;  New Request
-                    
-                    
-                    '''))],className="twelve columns"),
-                ], className="row "),
+                    html.H6('On Time Completion',
+                            className="gs-header gs-text-header padded"),
 
+                    html.Br([]),
+
+                    dcc.Markdown(on_time_completion),], className="three columns"),
+                # Request to vetted days
+                html.Div([
+                    html.H6('Request to Vetted',
+                            className="gs-header gs-text-header padded"),
+                    html.Br([]),
+                    dcc.Markdown(request_to_vetted),
+                    dcc.Markdown('''##### Days '''),], className="three columns"),
+                # New Request
+                html.Div([
+                    html.H6('New Request',
+                            className="gs-header gs-text-header padded"),
+                    html.Br([]),
+                    dcc.Markdown(new_request),], className="three columns"),
+                # Completed Request
+                html.Div([
+                    html.H6('Completed Request',
+                            className="gs-header gs-text-header padded"),
+                    html.Br([]),
+                    dcc.Markdown(completed_request),], className="three columns"),                
+
+            ], className="row "),
 
             # Row 2
-
             html.Div([
+                html.Div([
+                    html.H6('Impact Area', className="gs-header gs-text-header padded"),
+                    dcc.Graph(
+                        id = "impact-area-1",
+                        figure={
+                            'data' : [
+
+                            ],
+                            'layout' : go.Layout(
+
+                            )
+                        }
+
+                    )
+                ],className="six columns"),
 
                 html.Div([
-                    html.H6(["Average annual returns--updated monthly as of 02/28/2018"], className="gs-header gs-table-header tiny-header"),
-                    html.Table(make_dash_table(df_avg_returns), className="tiny-header")
-                ], className=" twelve columns"),
 
+                    html.H6('Solution Type', className="gs-header gs-text-header padded"),
+                    dcc.Graph(  
+                        id = "solution-type-1",
+                        figure={
+                            'data' : [
+                                go.Bar(
+
+                                )
+                            ],
+                            'layout' : go.Layout(
+
+                            )
+                        }
+                    )
+                ],className="six columns")
+
+            ],className="row"),
+            
+            # Top 10 Projects
+            html.Div([              
+                html.H6("Top 10 Projects for the past month", className="gs-header gs-table-header padded"),
+                html.Table(make_dash_table(df_topten))
             ], className="row "),
 
-            # Row 3
-
-            html.Div([
-
-                html.Div([
-                    html.H6(["Recent investment returns"], className="gs-header gs-table-header tiny-header"),
-                    html.Table(make_dash_table(df_recent_returns), className="tiny-header")
-                ], className=" twelve columns"),
-
-            ], className="row "),
-
-        ], className="subpage")
+        ], className="row ")
 
     ], className="page")
 
@@ -444,275 +489,56 @@ allProjects = html.Div([ # page 3
             html.Br([]),
             get_menu(),
 
-            # Row 1
-
+            # Active Projects
             html.Div([
-
                 html.Div([
-                    html.H6(["Portfolio"],
-                            className="gs-header gs-table-header padded")
+                    html.H6(["Active Projects"],
+                            className="gs-header gs-table-header padded"),
+                    html.Table(make_dash_table(df_topten))
                 ], className="twelve columns"),
-
             ], className="row "),
 
-            # Row 2
-
+            # Ready to Start
             html.Div([
-
                 html.Div([
-                    html.Strong(["Stock style"]),
-                    dcc.Graph(
-                        id='graph-5',
-                        figure={
-                            'data': [
-                                go.Scatter(
-                                    x = ["1"],
-                                    y = ["1"],
-                                    hoverinfo = "none",
-                                    marker = {
-                                        "opacity": 0
-                                    },
-                                    mode = "markers",
-                                    name = "B",
-                                )
-                            ],
-                            'layout': go.Layout(
-                                title = "",
-                                annotations = [
-                                {
-                                  "x": 0.990130093458,
-                                  "y": 1.00181709504,
-                                  "align": "left",
-                                  "font": {
-                                    "family": "Raleway",
-                                    "size": 9
-                                  },
-                                  "showarrow": False,
-                                  "text": "<b>Market<br>Cap</b>",
-                                  "xref": "x",
-                                  "yref": "y"
-                                },
-                                {
-                                  "x": 1.00001816013,
-                                  "y": 1.35907755794e-16,
-                                  "font": {
-                                    "family": "Raleway",
-                                    "size": 9
-                                  },
-                                  "showarrow": False,
-                                  "text": "<b>Style</b>",
-                                  "xref": "x",
-                                  "yanchor": "top",
-                                  "yref": "y"
-                                }
-                              ],
-                              autosize = False,
-                              width = 200,
-                              height = 150,
-                              hovermode = "closest",
-                              margin = {
-                                "r": 30,
-                                "t": 20,
-                                "b": 20,
-                                "l": 30
-                              },
-                              shapes = [
-                                {
-                                  "fillcolor": "rgb(51, 102, 255)",
-                                  "line": {
-                                    "color": "rgb(0, 0, 0)",
-                                    "width": 2
-                                  },
-                                  "opacity": 0.3,
-                                  "type": "rect",
-                                  "x0": 0,
-                                  "x1": 0.33,
-                                  "xref": "paper",
-                                  "y0": 0,
-                                  "y1": 0.33,
-                                  "yref": "paper"
-                                },
-                                {
-                                  "fillcolor": "rgb(51, 102, 255)",
-                                  "line": {
-                                    "color": "rgb(0, 0, 0)",
-                                    "dash": "solid",
-                                    "width": 2
-                                  },
-                                  "opacity": 0.3,
-                                  "type": "rect",
-                                  "x0": 0.33,
-                                  "x1": 0.66,
-                                  "xref": "paper",
-                                  "y0": 0,
-                                  "y1": 0.33,
-                                  "yref": "paper"
-                                },
-                                {
-                                  "fillcolor": "rgb(51, 102, 255)",
-                                  "line": {
-                                    "color": "rgb(0, 0, 0)",
-                                    "width": 2
-                                  },
-                                  "opacity": 0.3,
-                                  "type": "rect",
-                                  "x0": 0.66,
-                                  "x1": 0.99,
-                                  "xref": "paper",
-                                  "y0": 0,
-                                  "y1": 0.33,
-                                  "yref": "paper"
-                                },
-                                {
-                                  "fillcolor": "rgb(51, 102, 255)",
-                                  "line": {
-                                    "color": "rgb(0, 0, 0)",
-                                    "width": 2
-                                  },
-                                  "opacity": 0.3,
-                                  "type": "rect",
-                                  "x0": 0,
-                                  "x1": 0.33,
-                                  "xref": "paper",
-                                  "y0": 0.33,
-                                  "y1": 0.66,
-                                  "yref": "paper"
-                                },
-                                {
-                                  "fillcolor": "rgb(51, 102, 255)",
-                                  "line": {
-                                    "color": "rgb(0, 0, 0)",
-                                    "width": 2
-                                  },
-                                  "opacity": 0.3,
-                                  "type": "rect",
-                                  "x0": 0.33,
-                                  "x1": 0.66,
-                                  "xref": "paper",
-                                  "y0": 0.33,
-                                  "y1": 0.66,
-                                  "yref": "paper"
-                                },
-                                {
-                                  "fillcolor": "rgb(51, 102, 255)",
-                                  "line": {
-                                    "color": "rgb(0, 0, 0)",
-                                    "width": 2
-                                  },
-                                  "opacity": 0.3,
-                                  "type": "rect",
-                                  "x0": 0.66,
-                                  "x1": 0.99,
-                                  "xref": "paper",
-                                  "y0": 0.33,
-                                  "y1": 0.66,
-                                  "yref": "paper"
-                                },
-                                {
-                                  "fillcolor": "rgb(51, 102, 255)",
-                                  "line": {
-                                    "color": "rgb(0, 0, 0)",
-                                    "width": 2
-                                  },
-                                  "opacity": 0.3,
-                                  "type": "rect",
-                                  "x0": 0,
-                                  "x1": 0.33,
-                                  "xref": "paper",
-                                  "y0": 0.66,
-                                  "y1": 0.99,
-                                  "yref": "paper"
-                                },
-                                {
-                                  "fillcolor": "rgb(255, 127, 14)",
-                                  "line": {
-                                    "color": "rgb(0, 0, 0)",
-                                    "width": 1
-                                  },
-                                  "opacity": 0.9,
-                                  "type": "rect",
-                                  "x0": 0.33,
-                                  "x1": 0.66,
-                                  "xref": "paper",
-                                  "y0": 0.66,
-                                  "y1": 0.99,
-                                  "yref": "paper"
-                                },
-                                {
-                                  "fillcolor": "rgb(51, 102, 255)",
-                                  "line": {
-                                    "color": "rgb(0, 0, 0)",
-                                    "width": 2
-                                  },
-                                  "opacity": 0.3,
-                                  "type": "rect",
-                                  "x0": 0.66,
-                                  "x1": 0.99,
-                                  "xref": "paper",
-                                  "y0": 0.66,
-                                  "y1": 0.99,
-                                  "yref": "paper"
-                                }
-                              ],
-                              xaxis = {
-                                "autorange": True,
-                                "range": [0.989694747864, 1.00064057995],
-                                "showgrid": False,
-                                "showline": False,
-                                "showticklabels": False,
-                                "title": "<br>",
-                                "type": "linear",
-                                "zeroline": False
-                              },
-                              yaxis = {
-                                "autorange": True,
-                                "range": [-0.0358637178721, 1.06395696354],
-                                "showgrid": False,
-                                "showline": False,
-                                "showticklabels": False,
-                                "title": "<br>",
-                                "type": "linear",
-                                "zeroline": False
-                              }
-                            )
-                        },
-                        config={
-                            'displayModeBar': False
-                        }
-                    )
-
-                ], className="four columns"),
-
-                html.Div([
-                    html.P("Vanguard 500 Index Fund seeks to track the performance of\
-                     a benchmark index that meaures the investment return of large-capitalization stocks."),
-                    html.P("Learn more about this portfolio's investment strategy and policy.")
-                ], className="eight columns middle-aligned"),
-
+                    html.H6(["Ready to Start"],
+                            className="gs-header gs-table-header padded"),
+                    html.Table(make_dash_table(df_topten))
+                ], className="twelve columns"),
             ], className="row "),
 
-            # Row 3
+        ], className="subpage")
 
+    ], className="page")
+
+allProjects_vet_hld = html.Div([ # page 4
+
+        print_button(),
+
+        html.Div([
+
+            # Header
+            get_logo(),
+            get_header(),
             html.Br([]),
+            get_menu(),
 
+            # In Vetting
             html.Div([
-
                 html.Div([
-                    html.H6(["Equity characteristics as of 01/31/2018"], className="gs-header gs-table-header tiny-header"),
-                    html.Table(make_dash_table(df_equity_char), className="tiny-header")
-                ], className=" twelve columns"),
-
+                    html.H6(["In Vetting"],
+                            className="gs-header gs-table-header padded"),
+                    html.Table(make_dash_table(df_topten))
+                ], className="twelve columns"),
             ], className="row "),
 
-            # Row 4
-
+            # On Hold
             html.Div([
-
                 html.Div([
-                    html.H6(["Equity sector diversification"], className="gs-header gs-table-header tiny-header"),
-                    html.Table(make_dash_table(df_equity_diver), className="tiny-header")
-                ], className=" twelve columns"),
-
+                    html.H6(["On Hold"],
+                            className="gs-header gs-table-header padded"),
+                    html.Table(make_dash_table(df_topten))
+                ], className="twelve columns"),
             ], className="row "),
 
         ], className="subpage")
@@ -743,8 +569,10 @@ def display_page(pathname):
         return performance
     elif pathname == '/all-projects':
         return allProjects
+    elif pathname == '/all-project-vet-hld':
+        return allProjects_vet_hld
     elif pathname == '/full-view':
-        return overview,performance,allProjects
+        return overview,performance,allProjects,allProjects_vet_hld
     else:
         return noPage
 
