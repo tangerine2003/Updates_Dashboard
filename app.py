@@ -10,7 +10,7 @@ import os
 import datetime as dt
 import calendar
 import numpy as np
-from textwrap import dedent
+
 
 
 app = dash.Dash(__name__)
@@ -41,6 +41,9 @@ align_value = [9,0,72,9,7,0,3,0]
 
 # data frames
 df_topten = pd.read_csv('Top 10 Projects.csv',header=0)
+df_impact_area = pd.read_csv('Impact Area.csv',header=0)
+df_solution_type = pd.read_csv('Solution Type.csv',header=0)
+df_alignment = pd.read_csv('Solution Type.csv',header=0)
 
 #variables
 on_time_completion = '''# 30%'''
@@ -81,6 +84,7 @@ def get_logo():
 def get_header():
     year = dt.datetime.now()
     
+    
     header = html.Div([
 
         html.Div([
@@ -117,12 +121,10 @@ overview = html.Div([  # page 1
             html.Br([]),
             get_menu(),
 
-            # Row 3
-
             html.Div([
 
                 html.Div([
-                    html.H6('Updates',
+                    html.H6('Newsfeed',
                             className="gs-header gs-text-header padded"),
 
                     html.Br([]),
@@ -276,8 +278,6 @@ overview = html.Div([  # page 1
 
             ], className="row "),
 
-            # Row 5
-
             html.Div([
                 html.Div([
                     html.H6('Resource Breakdown Percentage',
@@ -337,8 +337,6 @@ overview = html.Div([  # page 1
 
                     )
                 ], className="six columns"),
-
-
 
                 html.Div([
                     html.H6("Alignment",
@@ -439,7 +437,8 @@ performance = html.Div([  # page 2
 
                             ],
                             'layout' : go.Layout(
-
+                                height = 200,
+                                width = 340
                             )
                         }
 
@@ -458,7 +457,8 @@ performance = html.Div([  # page 2
                                 )
                             ],
                             'layout' : go.Layout(
-
+                                height = 200,
+                                width = 340
                             )
                         }
                     )
@@ -472,7 +472,7 @@ performance = html.Div([  # page 2
                 html.Table(make_dash_table(df_topten))
             ], className="row "),
 
-        ], className="row ")
+        ], className="subpage")
 
     ], className="page")
 
@@ -481,9 +481,7 @@ allProjects = html.Div([ # page 3
         print_button(),
 
         html.Div([
-
             # Header
-
             get_logo(),
             get_header(),
             html.Br([]),
@@ -546,11 +544,7 @@ allProjects_vet_hld = html.Div([ # page 4
     ], className="page")
 
 noPage = html.Div([  # 404
-
-    html.P(["404 Page not found"])
-
-    ], className="no-page")
-
+    html.P(["404 Page not found"])], className="no-page")
 
 # Describe the layout, or the UI, of the app
 app.layout = html.Div([
